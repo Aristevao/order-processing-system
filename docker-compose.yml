@@ -33,6 +33,21 @@ services:
     networks:
       - microservices-network
 
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_START_RPC=true
+    healthcheck:
+      test: [ "CMD-SHELL", "cqlsh -e 'DESCRIBE KEYSPACES'" ]
+      interval: 20s
+      retries: 10
+      timeout: 10s
+    networks:
+      - microservices-network
+
   zookeeper:
     image: wurstmeister/zookeeper:latest
     ports:
@@ -47,6 +62,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      kafka:
+        condition: service_started
+      cassandra:
+        condition: service_healthy
     networks:
       - microservices-network
 
@@ -56,6 +75,10 @@ services:
       - "8082:8080"
     depends_on:
       postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      cassandra:
         condition: service_healthy
     networks:
       - microservices-network
@@ -67,6 +90,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      kafka:
+        condition: service_started
+      cassandra:
+        condition: service_healthy
     networks:
       - microservices-network
 
@@ -76,6 +103,10 @@ services:
       - "8084:8080"
     depends_on:
       postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      cassandra:
         condition: service_healthy
     networks:
       - microservices-network
