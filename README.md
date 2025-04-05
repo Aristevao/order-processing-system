@@ -25,7 +25,15 @@ Ensure you have the following installed:
 
 ---
 
-### 2. Building the Services
+### 2. Accessing the Project Root (WSL/Git Bash on Windows)
+
+To navigate to your project directory from WSL or Git Bash:
+
+```bash
+cd /mnt/c/T-Projects/order-processing-system
+```
+
+### 3. Building the Services
 
 Before running the services, you need to build each one using Maven.
 
@@ -35,10 +43,15 @@ Use the provided script:
 ./run_services.sh
 ```
 
-🛠 This will run mvn clean package -DskipTests for each service under the C:/T-Projects/order-processing-system
+🛠 This will run `mvn clean package -DskipTests` for each service under the `C:/T-Projects/order-processing-system`
 directory.
 
-### 3. Starting Cassandra
+### 4. Running the Containers
+To start all services and dependencies defined in your docker-compose.yml:
+
+💡 Use `docker-compose logs -f` to follow logs and verify everything is running.
+
+### 5. Starting Cassandra
 
 Run the script below to start the Cassandra container and initialize the keyspace and table:
 
@@ -48,28 +61,27 @@ Run the script below to start the Cassandra container and initialize the keyspac
 
 This script does the following:
 
-Starts Cassandra using Docker Compose
+* Starts Cassandra using Docker Compose
+* Waits until Cassandra is healthy
+* Creates the `orders_keyspace keyspace`
 
-Waits until Cassandra is healthy
+### 6. Running Cassandra database
 
-Creates the orders_keyspace keyspace
-
-### 4. Running Cassandra database
-
-#### 4.1. Starting Cassandra container with Docker Compose
+#### 6.1. Starting Cassandra container with Docker Compose
 
 ```bash
 docker-compose up -d cassandra
 ```
 
-#### 4.2. Initializing Cassandra
+#### 6.2. Initializing Cassandra
 
 ```bash
 docker exec -it cassandra cqlsh
 ```
-#### 4.3. Applying schema
 
-```bash
+#### 6.3. Applying schema
+
+```csl
 
 CREATE KEYSPACE IF NOT EXISTS orders_keyspace
 WITH replication = {
